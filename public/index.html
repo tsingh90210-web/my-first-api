@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body text-center p-5">
+                        <h1 class="card-title mb-3 text-primary">💳 Secure Payment</h1>
+                        <p class="card-text text-muted mb-4">Process payments safely via PayPal</p>
+                        
+                        <form id="paymentForm">
+                            <div class="mb-4 text-start">
+                                <label class="form-label fw-semibold">Your Full Name</label>
+                                <input type="text" id="userName" class="form-control form-control-lg" placeholder="e.g. John Smith" required>
+                            </div>
+
+                            <div class="mb-4 text-start">
+                                <label class="form-label fw-semibold">Amount (£)</label>
+                                <input type="number" id="amount" class="form-control form-control-lg" value="10.00" min="1" step="0.01" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fs-5">
+                                🚀 Proceed to PayPal
+                            </button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <a href="/dashboard" class="btn btn-outline-secondary w-100">
+                            📊 View Payment History / Dashboard
+                        </a>
+                    </div>
+                </div>
+                <p class="text-center text-muted mt-3 small">© 2024 Payment System | Secure & Reliable</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userName = document.getElementById('userName').value;
+            const amount = document.getElementById('amount').value;
+
+            try {
+                const response = await fetch('/paypal/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userName, amount })
+                });
+
+                if (!response.ok) throw new Error(`Server Error: ${response.status}`);
+                const data = await response.json();
+                const approvalUrl = data.links.find(link => link.rel === 'approve').href;
+                window.location.href = approvalUrl;
+
+            } catch (error) {
+                alert(`❌ Payment Failed: ${error.message}`);
+                console.error('Error details:', error);
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
