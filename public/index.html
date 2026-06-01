@@ -51,13 +51,15 @@
             const userName = document.getElementById('userName').value;
             const amount = document.getElementById('amount').value;
 
-            try {
-                const response = await fetch('/paypal/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userName, amount })
-                });
-
+        try {
+            const response = await fetch('/paypal/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': '12345'
+                },
+                body: JSON.stringify({ userName, amount })
+            })
                 if (!response.ok) throw new Error(`Server Error: ${response.status}`);
                 const data = await response.json();
                 const approvalUrl = data.links.find(link => link.rel === 'approve').href;
