@@ -19,6 +19,8 @@ async function bootstrap() {
 
   // ✅ This line tells your server to show your frontend files
   app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
 
   // Allow browser to connect
   app.enableCors();

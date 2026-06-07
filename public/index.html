@@ -1,77 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Payment System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Payment</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+max-width: 450px;
+margin: 50px auto;
+padding: 20px;
+text-align: center;
+}
+.payment-container {
+border-radius: 8px;
+padding: 30px;
+box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+h2 {
+color: #2c3e50;
+margin-bottom: 10px;
+}
+.subtext {
+color: #7f8c8d;
+margin-bottom: 30px;
+}
+.form-group {
+margin-bottom: 20px;
+text-align: left;
+}
+label {
+display: block;
+margin-bottom: 6px;
+color: #34495e;
+}
+input {
+width: 100%;
+padding: 10px;
+border: 1px solid #ddd;
+border-radius: 4px;
+font-size: 16px;
+}
+button {
+width: 100%;
+padding: 14px;
+background-color: #0070ba;
+color: white;
+border: none;
+border-radius: 4px;
+font-size: 18px;
+cursor: pointer;
+}
+button:hover {
+background-color: #005ea6;
+}
+</style>
 </head>
-<body class="bg-light">
+<body>
+<div class="payment-container">
+<h2>Secure Payment</h2>
+<p class="subtext">Process payments safely via PayPal</p>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-lg border-0 rounded-4">
-                    <div class="card-body text-center p-5">
-                        <h1 class="card-title mb-3 text-primary">💳 Secure Payment</h1>
-                        <p class="card-text text-muted mb-4">Process payments safely via PayPal</p>
-                        
-                        <form id="paymentForm">
-                            <div class="mb-4 text-start">
-                                <label class="form-label fw-semibold">Your Full Name</label>
-                                <input type="text" id="userName" class="form-control form-control-lg" placeholder="e.g. John Smith" required>
-                            </div>
+<div class="form-group">
+<label>Your Full Name</label>
+<input type="text" id="userName" placeholder="Enter your full name">
+</div>
 
-                            <div class="mb-4 text-start">
-                                <label class="form-label fw-semibold">Amount (£)</label>
-                                <input type="number" id="amount" class="form-control form-control-lg" value="10.00" min="1" step="0.01" required>
-                            </div>
+<div class="form-group">
+<label>Amount (£)</label>
+<input type="number" step="0.01" min="0.01" id="amount" placeholder="0.00">
+</div>
 
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fs-5">
-                                🚀 Proceed to PayPal
-                            </button>
-                        </form>
+<button onclick="createPaypalOrder()">Proceed to PayPal</button>
 
-                        <hr class="my-4">
+<!-- Link back to your dashboard -->
+<p style="margin-top:30px;"><a href="/dashboard">View Payment Dashboard</a></p>
+</div>
 
-                        <a href="/dashboard" class="btn btn-outline-secondary w-100">
-                            📊 View Payment History / Dashboard
-                        </a>
-                    </div>
-                </div>
-                <p class="text-center text-muted mt-3 small">© 2024 Payment System | Secure & Reliable</p>
-            </div>
-        </div>
-    </div>
+<script>
+function createPaypalOrder() {
+const userName = document.getElementById('userName').value.trim();
+const amount = document.getElementById('amount').value;
 
-    <script>
-        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+if (!userName || !amount || isNaN(amount) || Number(amount) <= 0) {
+alert('Please enter a valid name and amount greater than £0.00');
+return;
+}
 
-            const userName = document.getElementById('userName').value;
-            const amount = document.getElementById('amount').value;
-
-        try {
-            const response = await fetch('/paypal/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': '12345'
-                },
-                body: JSON.stringify({ userName, amount })
-            })
-                if (!response.ok) throw new Error(`Server Error: ${response.status}`);
-                const data = await response.json();
-                const approvalUrl = data.links.find(link => link.rel === 'approve').href;
-                window.location.href = approvalUrl;
-
-            } catch (error) {
-                alert(`❌ Payment Failed: ${error.message}`);
-                console.error('Error details:', error);
-            }
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+fetch('/paypal/create', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ userName: userName, amount: parseFloat(amount) })
+})
+.then(res => res.json())
+.then(result => {
+if (result.success && result.approvalUrl) {
+window.location.href = result.approvalUrl;
+} else {
+alert('Payment failed: ' + (result.message || 'Please try again'));
+}
+})
+.catch(err => alert('Payment failed: ' + err.message));
+}
+</script>
 </body>
 </html>

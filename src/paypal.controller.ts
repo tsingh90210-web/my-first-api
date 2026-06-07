@@ -1,24 +1,32 @@
-import { ApiKeyGuard } from './api-key.guard';
-import { UseGuards } from '@nestjs/common';
-import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
-import { PaypalService } from './paypal.service';
+import { Controller, Post, Body } from '@nestjs/common';
+import { PrismaService } from './prisma/prisma.service';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Controller('paypal')
 export class PaypalController {
-  constructor(private readonly paypalService: PaypalService) {}
+  constructor(private prisma: PrismaService) {}
 
   @Post('create')
-  create(@Body() body: { amount: string }) {
-    return this.paypalService.createOrder(body.amount);
-  }
+  async createPayment(@Body() body: { userName: string; amount: number }) {
+    try {
+      // Save payment exactly like the dashboard does
+      const payment = await this.prisma.payment.create({
+        data: {
+          userName: body.userName,
+          amount: new Decimal(body.amount),
+          status: 'PENDING',
+          currency: 'GBP'
+        }
+      });
 
-  @Post('capture/:id')
-  capture(@Param('id') id: string) {
-    return this.paypalService.captureOrder(id);
+      return {
+        success: true,
+        approvalUrl: '/dashboard'
+      };
+
+    } catch (err) {
+      console.error('🔥 SERVER ERROR:', err);
+      throw new Error('Payment failed');
+    }
   }
-  @Get('success')
-async success(@Query('token') token: string, @Query('PayerID') payerId: string) {
-const result = await this.paypalService.captureOrder(token);
-return { message: 'Payment successful!', result };
-}
 }

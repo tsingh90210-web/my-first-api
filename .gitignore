@@ -4,6 +4,9 @@
 /node_modules
 /build
 
+#Saved payment data
+payments.json
+
 # Logs
 logs
 *.log

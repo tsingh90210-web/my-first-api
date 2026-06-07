@@ -1,28 +1,43 @@
-# My First API 🚀
-A simple REST API built with **NestJS** to manage users, including full CRUD operations and interactive Swagger documentation.
+# PayPal Payment System
+
+A secure, end‑to‑end payment processing application built with Node.js and Express, integrated with the PayPal Checkout API (Sandbox). Designed with security, maintainability, and portability in mind.
 
 ---
 
-## 📌 Features
-- **Create** a new user
-- **Get** all users
-- **Get** a single user by ID
-- **Update** an existing user
-- **Delete** a user
-- Interactive **Swagger UI** documentation
+## ✨ Key Features
+- Complete PayPal payment flow (create → approve → capture)
+- Custom payer name and amount input
+- Success and cancellation handling
+- **Persistent storage**: All transactions saved permanently in a JSON file
+- **Transaction dashboard**: View full payment history with order details
+- **Optional user authentication**: JWT‑based login to restrict access
+- Secure credential management via environment variables
+- Fully containerised with Docker for consistent deployment
+- Clean, responsive web interface
+- No hard‑coded secrets — follows industry security best practices
 
 ---
 
 ## 🛠️ Tech Stack
-- **NestJS** — Node.js framework
-- **TypeScript**
-- **Swagger / OpenAPI** — API documentation
-- **Postman** — API testing
+- **Backend**: Node.js + Express.js
+- **Payment Gateway**: PayPal Checkout API (Sandbox environment)
+- **Storage**: JSON file (can be easily upgraded to MongoDB/PostgreSQL)
+- **Security**: Environment variables, optional JWT authentication, password hashing
+- **Containerisation**: Docker & Docker Compose
+- **Tools**: Git, npm, dotenv
 
 ---
 
-## 🚀 How to Run Locally
+## 🚀 Installation & Setup
 
-### 1. Install dependencies
+### Prerequisites
+- Node.js v18+ (or Docker/Rancher Desktop)
+- A PayPal Developer account with Sandbox API credentials
+
+---
+
+### Option A: Run locally with Node.js
+1. **Clone the repository**
 ```bash
-npm install
+git clone https://github.com/tsingh90210-web/my-first-api.git
+cd my-first-api

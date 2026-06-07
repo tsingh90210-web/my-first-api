@@ -6,9 +6,23 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String?
   createdAt DateTime @default(now())
+}
+
+// ✅ ADD THIS NEW PAYMENT MODEL
+model Payment {
+  id             Int   @id @default(autoincrement())
+  userName       String
+  transactionId  String?   @unique   // PayPal's unique order ID
+  amount         Decimal            // Payment amount
+  currency       String             // e.g. GBP, USD
+  status         String             // COMPLETED, PENDING, FAILED
+  payerEmail     String?             // Customer's email
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
