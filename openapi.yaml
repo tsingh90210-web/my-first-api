@@ -1,0 +1,135 @@
+openapi: 3.0.3
+info:
+title: PayPal Payment System API
+description: REST API for processing PayPal payments, viewing transaction history, and user authentication
+version: 1.0.0
+servers:
+- url: http://localhost:3000
+description: Local development server
+paths:
+/:
+get:
+summary: Load homepage payment form
+description: Returns the HTML form to enter name and payment amount
+security:
+- CookieAuth: []
+responses:
+'200':
+description: HTML form loaded successfully
+/paypal/create:
+post:
+summary: Create a new PayPal payment order
+description: Generates a PayPal order and returns an approval URL
+security:
+- CookieAuth: []
+requestBody:
+required: true
+content:
+application/json:
+schema:
+type: object
+required:
+- userName
+- amount
+properties:
+userName:
+type: string
+example: John Smith
+amount:
+type: number
+minimum: 0.01
+example: 10.50
+responses:
+'200':
+description: Order created successfully
+content:
+application/json:
+schema:
+type: object
+properties:
+success:
+type: boolean
+example: true
+approvalUrl:
+type: string
+example: https://www.sandbox.paypal.com/checkoutnow?token=123ABC
+'400':
+description: Invalid input data
+/payment/success:
+get:
+summary: Handle successful payment capture
+description: Captures the approved payment and saves transaction record
+parameters:
+- name: token
+in: query
+required: true
+schema:
+type: string
+- name: enteredName
+in: query
+required: true
+schema:
+type: string
+responses:
+'200':
+description: Payment completed and saved
+/payment/cancel:
+get:
+summary: Payment cancelled by user
+description: Shows cancellation confirmation page
+responses:
+'200':
+description: Cancellation page displayed
+/dashboard:
+get:
+summary: View all payment history
+description: Displays table of all saved transactions
+security:
+- CookieAuth: []
+responses:
+'200':
+description: Dashboard loaded with transaction data
+/login:
+get:
+summary: Show login page
+description: Returns login form when authentication is enabled
+responses:
+'200':
+description: Login form displayed
+post:
+summary: Authenticate user
+description: Verifies credentials and sets session cookie
+requestBody:
+required: true
+content:
+application/x-www-form-urlencoded:
+schema:
+type: object
+required:
+- username
+- password
+properties:
+username:
+type: string
+example: admin
+password:
+type: string
+example: admin123
+responses:
+'302':
+description: Login successful, redirect to homepage
+'401':
+description: Invalid credentials
+/logout:
+get:
+summary: Logout user
+description: Clears authentication cookie and redirects
+responses:
+'302':
+description: Logged out successfully
+components:
+securitySchemes:
+CookieAuth:
+type: apiKey
+in: cookie
+name: token
