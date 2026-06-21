@@ -3,7 +3,7 @@ Controller, Post, Body, Param, Patch, Get, Query, Render,
 HttpStatus, HttpException
 } from '@nestjs/common';
 import { ApiOperation, ApiBody, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 import { PaypalService } from './paypal.service';
 import { Decimal } from '@prisma/client/runtime/library';
 
