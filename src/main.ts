@@ -26,7 +26,7 @@ app.setBaseViewsDir(join(__dirname, '..', 'views'));
 app.setViewEngine('hbs');
 
 // ✅ Fix for Cloud Run
-const port = parseInt(process.env.PORT || '3000', 10);
+const port = parseInt(process.env.PORT || '8080', 10);
 await app.listen(port, '0.0.0.0');
 console.log(`✅ Server running on port ${port}`);
 }

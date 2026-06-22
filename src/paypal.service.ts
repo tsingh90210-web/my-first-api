@@ -27,8 +27,8 @@ request.requestBody({
 intent: 'CAPTURE',
 purchase_units: [{ amount: { currency_code: currency, value: amount.toFixed(2) } }],
 application_context: {
-return_url: 'http://localhost:3000/pay/success',
-cancel_url: 'http://localhost:3000/pay/cancel'
+return_url: 'http://localhost:8080/pay/success',
+cancel_url: 'http://localhost:8080/pay/cancel'
 }
 });
 const order = await this.client.execute(request);

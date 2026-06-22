@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the app — simplified and reliable
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]

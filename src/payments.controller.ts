@@ -33,13 +33,15 @@ private readonly paypalService: PaypalService
 @ApiResponse({ status: 201, description: 'Payment created' })
 async createPayment(@Body() body: CreatePaymentDto) {
 try {
-if (!body.userName || !body.amount || body.amount <= 0) {
-throw new HttpException('Valid name and amount required', HttpStatus.BAD_REQUEST);
+if (!body.amount || 
+    Number(body.amount <= 0)) {
+throw new HttpException('Valid amount required', HttpStatus.BAD_REQUEST);
 }
+const userName = body.userName ||'Guest User';
 const { approvalUrl, orderId } = await this.paypalService.createOrder(body.amount);
 const payment = await this.prisma.payment.create({
 data: {
-userName: body.userName,
+userName: userName,
 amount: new Decimal(body.amount),
 status: 'PENDING',
 currency: 'GBP',

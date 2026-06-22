@@ -66,7 +66,7 @@ res.json({ message: 'Hello! API is working correctly' });
 // --------------------------
 // PORT SETUP (works everywhere)
 // --------------------------
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
 console.log(`✅ Server running on port ${PORT}`);
 console.log(`📚 Swagger docs available at: /api-docs`);
