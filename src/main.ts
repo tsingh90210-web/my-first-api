@@ -8,10 +8,10 @@ import * as express from 'express';
 async function bootstrap() {
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-// ✅ Cloud Run compliant port setup
+// ✅ Correct port for Cloud Run
 const port = parseInt(process.env.PORT || '8080', 10);
 
-// ✅ Root redirect (no infinite loop)
+// ✅ Root redirect
 app.use('/', (req, res, next) => {
 if (req.path === '/') return res.redirect('/pay');
 next();
@@ -21,7 +21,7 @@ next();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Swagger API Docs setup
+// ✅ Swagger setup
 const config = new DocumentBuilder()
 .setTitle('PayPal Payment API')
 .setDescription('Create and capture payments via PayPal')
@@ -30,12 +30,12 @@ const config = new DocumentBuilder()
 const document = SwaggerModule.createDocument(app, config);
 SwaggerModule.setup('api-docs', app, document);
 
-// ✅ Views & static files
+// ✅ Static files & views
 app.useStaticAssets(join(__dirname, '..', 'public'));
 app.setBaseViewsDir(join(__dirname, '..', 'views'));
 app.setViewEngine('hbs');
 
-// ✅ CRITICAL FOR CLOUD RUN: Listen on all network interfaces
+// ✅ THE MOST IMPORTANT LINE: Listen on ALL network interfaces!
 await app.listen(port, '0.0.0.0');
 console.log(`✅ Server running on port ${port}, ready for Cloud Run!`);
 }
