@@ -7,13 +7,17 @@ import * as express from 'express';
 
 async function bootstrap() {
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
-const port = process.env.PORT || 8080;
 
+// ✅ Cloud Run compliant port setup
+const port = parseInt(process.env.PORT || '8080', 10);
+
+// ✅ Root redirect (no infinite loop)
 app.use('/', (req, res, next) => {
-    if (req.path === '/') return res.redirect('/pay');
-    next ();
+if (req.path === '/') return res.redirect('/pay');
+next();
 });
 
+// ✅ Standard middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,7 +35,9 @@ app.useStaticAssets(join(__dirname, '..', 'public'));
 app.setBaseViewsDir(join(__dirname, '..', 'views'));
 app.setViewEngine('hbs');
 
+// ✅ CRITICAL FOR CLOUD RUN: Listen on all network interfaces
 await app.listen(port, '0.0.0.0');
-console.log(`🚀 Server running on http://localhost:${port}`);
+console.log(`✅ Server running on port ${port}, ready for Cloud Run!`);
 }
+
 bootstrap();
