@@ -1,23 +1,25 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies first
+# Copy dependency files first for faster, more reliable builds
 COPY package*.json ./
-RUN npm install 
+
+# Install dependencies, skip version warnings
+RUN npm ci --only=production --ignore-engines
 
 # Copy Prisma schema and generate client
-COPY prisma ./prisma/
+COPY prisma ./prisma
 RUN npx prisma generate
 
-# Copy the rest of the source code
+# Copy all your project code
 COPY . .
 
-# Build the app
+# Build your NestJS app
 RUN npm run build
 
-# Expose the port
+# Cloud Run uses port 8080 by default
 EXPOSE 8080
 
-# Start the app — simplified and reliable
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+# Start your server
+CMD ["node", "dist/main.js"]
