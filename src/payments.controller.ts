@@ -1,102 +1,137 @@
-import { Controller, Post, Body, HttpStatus, HttpException, Get, Render, Query, Patch, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Render, Post, Body, Query, Redirect } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiBody, ApiTags } from '@nestjs/swagger';
+import { PaymentsService } from './payments.service';
 import { PaypalService } from './paypal.service';
-import { PrismaService } from './prisma/prisma.service';
-class CreatePaymentDto {
-    userName?: string;
-    amount: number;
-}
-class UpdatePaymentStatusDto {
-    status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-}
-@ApiTags('payments')
+
+@ApiTags('Payments')
 @Controller('pay')
 export class PaymentsController {
+// Temporary storage for current payment details
+private currentPayment: { userName: string; amount: number } | null = null;
+
 constructor(
+private readonly paymentsService: PaymentsService,
 private readonly paypalService: PaypalService,
-private readonly prisma: PrismaService,
 ) {}
 
+@Get()
+@ApiOperation({ summary: 'Payment form page' })
+@Render('payment')
+getPaymentForm() {
+return {};
+}
+
 @Post('create')
-@ApiOperation({ summary: 'Create payment and get PayPal link' })
-@ApiResponse({ status: 201, description: 'Payment created' })
-async createPayment(@Body() body: CreatePaymentDto) {
+@ApiOperation({ summary: 'Create new PayPal payment order' })
+@ApiBody({
+description: 'User name and payment amount',
+schema: {
+type: 'object',
+properties: {
+userName: { type: 'string', example: 'Paul Hunter', description: 'Full name of the payer' },
+amount: { type: 'number', example: 5.00, description: 'Payment amount in GBP' }
+},
+required: ['userName', 'amount']
+}
+})
+async createOrder(@Body() body: { userName: string; amount: string | number }) {
+console.log('📥 Received form data:', body);
+
 try {
-if (!body.amount || Number(body.amount) <= 0) {
-throw new HttpException('Valid amount required', HttpStatus.BAD_REQUEST);
-}
-const userName = body.userName || 'Guest User';
-const { approvalUrl, orderId } = await this.paypalService.createOrder(body.amount);
+const amount = Number(body.amount);
+const userName = body.userName || 'Customer';
+console.log('💰 Converted amount:', amount, '👤 Name:', userName);
 
-// DB call disabled for now
-return { success: true, orderId, approvalUrl };
-
-} catch (err) {
-throw new HttpException((err as Error).message || 'Failed', HttpStatus.BAD_REQUEST);
-}
+if (isNaN(amount) || amount <= 0) {
+console.log('❌ Invalid amount provided');
+return { error: 'Please enter a valid amount greater than 0' };
 }
 
-@Patch(':id/status')
-@ApiOperation({ summary: 'Update payment status' })
-@ApiParam({ name: 'id', description: 'PayPal Order ID' })
-@ApiBody({ type: UpdatePaymentStatusDto })
-@ApiResponse({ status: 200, description: 'Status updated' })
-async updatePaymentStatus(@Param('id') orderId: string, @Body() body: UpdatePaymentStatusDto) {
-// DB call disabled for now
-return { success: true, orderId, status: body.status };
+// Save details to use later when saving to database
+this.currentPayment = { userName, amount };
+
+const result = await this.paypalService.createOrder(amount, 'GBP');
+console.log('✅ PayPal order created successfully:', result);
+return result;
+
+} catch (fullError) {
+console.error('❌ FULL ERROR DETAILS:');
+console.error(fullError);
+return { error: 'Something went wrong creating your payment' };
+}
 }
 
 @Post('capture')
-@ApiOperation({ summary: 'Capture approved payment' })
-@ApiResponse({ status: 200, description: 'Payment captured' })
+@ApiOperation({ summary: 'Capture approved PayPal payment' })
+@ApiBody({
+description: 'PayPal order ID to capture',
+schema: {
+type: 'object',
+properties: {
+orderId: { type: 'string', example: '8WU968379K863424H', description: 'PayPal order ID from approval' }
+},
+required: ['orderId']
+}
+})
 async capturePayment(@Body() body: { orderId: string }) {
-try {
-const captured = await this.paypalService.captureOrder(body.orderId);
-if (!captured) throw new HttpException('Capture failed', HttpStatus.BAD_REQUEST);
-
-// DB call disabled for now
-return { success: true, message: 'Payment completed' };
-
-} catch (err) {
-throw new HttpException((err as Error).message, HttpStatus.BAD_REQUEST);
+return this.paypalService.captureOrder(body.orderId);
 }
-}
-
 
 @Get('success')
-@ApiOperation({ summary: 'Payment success return' })
-@ApiQuery({ name: 'token', required: false })
+@ApiOperation({ summary: 'Payment success return page' })
+@ApiQuery({ name: 'token', required: false, description: 'PayPal approval token / order ID' })
 async paymentSuccess(@Query('token') orderId?: string) {
 try {
 if (!orderId) {
-return `<h1>✅ Payment Completed</h1><p><a href="/pay/dashboard">View Dashboard</a></p>`;
+return `
+<div style="text-align:center; margin-top:80px; font-family: Arial, sans-serif;">
+<h1 style="color:#28a745;">✅ Payment Completed</h1>
+<p style="font-size:18px; margin-top:20px;">Your payment has been processed successfully.</p>
+<p style="margin-top:30px;"><a href="/pay/dashboard" style="font-size:18px; color:#007bff;">View Payment Dashboard</a></p>
+</div>`;
 }
-await this.paypalService.captureOrder(orderId);
-return `<h1>✅ Payment Successful</h1><p>Thank you!<br/><a href="/pay/dashboard">View Dashboard</a></p>`;
-} catch {
-return `<h1>❌ Payment Error</h1><p><a href="/pay/dashboard">Back to Dashboard</a></p>`;
+
+// Save payment with actual name and amount from your form
+const userName = this.currentPayment?.userName || 'Customer';
+const amount = this.currentPayment?.amount || 0;
+
+await this.paymentsService.savePayment(orderId, userName, amount);
+console.log('✅ Payment saved to database! Name:', userName, 'Amount:', amount);
+
+// Clear temporary data
+this.currentPayment = null;
+
+return `
+<div style="text-align:center; margin-top:80px; font-family: Arial, sans-serif;">
+<h1 style="color:#28a745;">✅ Payment Successful</h1>
+<p style="font-size:18px; margin-top:20px;">Thank you! Your payment has been recorded permanently.</p>
+<p style="margin-top:30px;"><a href="/pay/dashboard" style="font-size:18px; color:#007bff;">View Payment Dashboard</a></p>
+</div>`;
+
+} catch (err) {
+console.error('❌ Error saving payment:', err);
+return `
+<div style="text-align:center; margin-top:80px; font-family: Arial, sans-serif;">
+<h1 style="color:#dc3545;">⚠️ Payment Processed</h1>
+<p style="font-size:18px; margin-top:20px;">Your payment was successful, and will appear in your history shortly.</p>
+<p style="margin-top:30px;"><a href="/pay/dashboard" style="font-size:18px; color:#007bff;">View Payment Dashboard</a></p>
+</div>`;
 }
 }
+
 @Get('cancel')
+@ApiOperation({ summary: 'Payment cancelled page' })
 @Render('cancel')
-@ApiOperation({ summary: 'Payment cancelled' })
 async paymentCancel() {
-return `<h1>❌ Payment Cancelled</h1><p><a href="/">Try again</a> | <a href="/pay/dashboard">Dashboard</a></p>`;
+this.currentPayment = null;
+return { message: 'Payment Cancelled' };
 }
 
 @Get('dashboard')
+@ApiOperation({ summary: 'View all saved payments history' })
 @Render('dashboard')
-@ApiOperation({ summary: 'View all payments' })
-async showDashboard() {
-// Empty list, no DB call
-const payments: any[] = [];
+async dashboard() {
+const payments = await this.paymentsService.getPaymentHistory();
 return { payments };
-}
-
-@Get()
-@Render('payment')
-@ApiOperation({ summary: 'Show payment form' })
-async showForm() {
-return {};
 }
 }
