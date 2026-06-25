@@ -34,7 +34,7 @@ value: amount.toFixed(2)
 }],
 application_context: {
 return_url: 'https://my-first-api-801597296257.europe-west2.run.app/pay/success',
-cancel_url: 'https://my-first-api-801597296257.europe-west2.run.app/pay',
+cancel_url: 'https://my-first-api-801597296257.europe-west2.run.app/pay/cancel',
 }
 });
 
