@@ -2,24 +2,24 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy all dependency files
+# Copy dependency files first
 COPY package*.json ./
 
-# Install ALL dependencies (including dev ones needed for build)
+# Install ALL dependencies (including dev tools needed for build)
 RUN npm ci --ignore-engines
 
-# Copy Prisma files and generate client
+# Copy Prisma and generate client
 COPY prisma ./prisma
 RUN npx prisma generate
 
-# Copy all your project code
+# Copy all project code
 COPY . .
 
-# Now nest command exists — build works perfectly!
+# Build the app
 RUN npm run build
 
-# Expose Cloud Run port
+# Expose the correct port
 EXPOSE 8080
 
-# Start the app (only production dependencies run here)
+# Start the app
 CMD ["node", "dist/main.js"]
