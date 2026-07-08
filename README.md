@@ -89,7 +89,7 @@ Run
 
 # 1. Clone the repository 
 
-git clone https://github.com/tsingh90218/web-my-first-api.git 
+git clone https://github.com/tsingh90210/web-my-first-api.git 
 
 cd my-first-api 
 
