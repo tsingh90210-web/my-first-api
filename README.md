@@ -15,18 +15,16 @@ Secure serverless payment integration • PayPal • GCP Cloud Run • CI/CD •
 •	Payments: PayPal REST API (Sandbox & Live modes)
 •	Database: Supabase / PostgreSQL
 •	Hosting: Google Cloud Run — serverless, auto-scaling
-•	CI/CD: GitHub Actions — lint → test → security scan → deploy automatically
 •	Infrastructure: Terraform — Infrastructure as Code
 
 🤖 CI/CD Pipeline
-Every push to main runs this — only deploys if ALL checks pass ✅
-Stage	Purpose	Status
-📏 Lint	Enforce consistent code style	✅ Active
-🧪 Test	Unit & integration tests	✅ Active
-🔒 Security	npm audit + CodeQL vulnerability scan	✅ Active
-🚀 Deploy	Build & deploy to Cloud Run	✅ Automated
+Every push to master triggers an automatic check via GitHub Actions ✅
+- ✅ **Trigger:** Runs automatically on every code push
+- ✅ **Checkout & Setup:** Pulls code + sets up Node.js environment
+- ✅ **Status:** Active & Passing 
+- 📌 *Next: will extend to auto-deploy to Cloud Run once fully tested*
 
-Broken code never reaches production. Issues caught early, every single time.
+> Broken code never reaches production. Issues caught early, every single time.
 
 🌐 Live Demo
 •	API URL: https://my-first-api-881597296257.europe-west2.run.app
