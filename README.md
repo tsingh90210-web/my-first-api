@@ -1,3 +1,5 @@
+![Simple CI Check](https://github.com/tsingh90210-web/my-first-api/actions/workflows/node.js.yml/badge.svg)
+
 Node.js & Google Cloud Run PayPal Payment Processing API
 🚀 Payment Processing API — Node.js & Google Cloud Run
 Secure serverless payment integration • PayPal • GCP Cloud Run • CI/CD • Terraform
