@@ -14,3 +14,5 @@ terraform fmt
 terraform validate
 terraform plan
 terraform apply
+
+> ⚠️ **Note:** The live Cloud Run service for this API was deployed manually via the GCP Console. This Terraform configuration demonstrates Infrastructure as Code best practices — you'll need your own GCP project and credentials to run `terraform apply`.
