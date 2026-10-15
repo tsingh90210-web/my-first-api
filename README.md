@@ -24,6 +24,19 @@ Every push to master triggers an automatic check via GitHub Actions ✅
 - ✅ **Status:** Active & Passing 
 - 📌 *Next: will extend to auto-deploy to Cloud Run once fully tested*
 
+- ## 📦 Infrastructure as Code (Terraform)
+  
+
+This project uses **Terraform** to define and provision the Cloud Run infrastructure as code, ensuring consistency, repeatability, and version-controlled deployments.
+
+### 📁 Project Structure
+
+my-first-api/
+└── terraform/
+    ├── main.tf       ✅ What infrastructure to create
+    ├── variables.tf  ✅ Your settings & values
+    └── outputs.tf     ✅ What comes out after deployment
+
 > Broken code never reaches production. Issues caught early, every single time.
 
 🌐 Live Demo
