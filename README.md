@@ -74,7 +74,7 @@ This project uses **Terraform** to define and provision the Cloud Run infrastruc
 
 | Item | Details |
 |------|---------|
-| **API URL** | https://my-first-api-881597296257.europe-west2.run.app |
+| **API URL** | https://my-first-api-801597296257.europe-west2.run.app/pay |
 | **Status** | ✅ Live & Running |
 
 ---
