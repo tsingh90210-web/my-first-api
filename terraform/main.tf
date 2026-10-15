@@ -19,7 +19,7 @@ resource "google_cloud_run_service" "api" {
   template {
     spec {
       containers {
-        image = "europe-west2-docker.pkg.dev/${var.gcp_project_id}/api/my-first-api:latest"
+        image = "europe-west2-docker.pkg.dev/project-cde1593b-cb6c-47e3-b5d/api/my-first-api:latest"
       }
     }
   }
