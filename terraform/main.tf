@@ -13,22 +13,14 @@ provider "google" {
 }
 
 resource "google_cloud_run_service" "api" {
-  name     = "payment-api"
+  name     = "my-first-api"
   location = var.gcp_region
 
   template {
     spec {
       containers {
-        image = "europe-west2-docker.pkg.dev/${var.gcp_project_id}/payment-api/api:latest"
-        ports {
-          container_port = 8080
-        }
+        image = "europe-west2-docker.pkg.dev/${var.gcp_project_id}/api/my-first-api:latest"
       }
     }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
   }
 }
