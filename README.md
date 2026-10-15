@@ -79,6 +79,8 @@ This project uses **Terraform** to define and provision the Cloud Run infrastruc
 | **Payment Endpoint** | https://my-first-api-801597296257.europe-west2.run.app/pay |
 | **Status** | ✅ Live & Running |
 
+📖 Full interactive API documentation powered by **Swagger/OpenAPI** — test endpoints directly from your browser.
+
 ---
 
 ## 💻 Run Locally
