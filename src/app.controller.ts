@@ -1,17 +1,13 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get('users')
-  getUsers() {
-    return this.appService.getUsers();
-  }
-
-  @Get('users/:id')
-  getUser(@Param('id') id: string) {
-    return this.appService.getUser(id);
-  }
+@Get('health')
+getHealth() {
+return {
+status: 'healthy',
+timestamp: new Date().toISOString(),
+service: 'my-first-api'
+};
+}
 }
