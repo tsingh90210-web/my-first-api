@@ -24,6 +24,31 @@ app.post('/categories', async (req, res) => {
   res.json(newCat)
 })
 
+// Get all categories
+app.get('/categories', async (req, res) => {
+const allCategories = await prisma.categoryInfo.findMany()
+res.json(allCategories)
+})
+
+// Health Check Endpoint
+app.get('/health', (req, res) => {
+res.json({
+status: 'healthy',
+timestamp: new Date().toISOString(),
+uptime: process.uptime(),
+service: 'my-first-api'
+})
+})
+
+// Create new category
+app.post('/categories', async (req, res) => {
+const newCat = await prisma.categoryInfo.create({
+data: req.body
+})
+res.json(newCat)
+})
+
+
 // Start server
 const PORT = 3000
 app.listen(PORT, () => {
