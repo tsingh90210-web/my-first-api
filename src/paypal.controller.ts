@@ -21,4 +21,13 @@ async success(@Query('token') token: string, @Query('PayerID') payerId: string) 
 const result = await this.paypalService.captureOrder(token);
 return { message: 'Payment successful!', result };
 }
+  @Get('health')
+healthCheck() {
+return {
+status: 'healthy',
+timestamp: new Date().toISOString(),
+service: 'my-first-api'
+};
+}
+
 }
