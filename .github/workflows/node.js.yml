@@ -28,7 +28,7 @@ jobs:
         run: npm run lint || echo "No lint script found — skipping"
 
       - name: Run unit tests
-        run: npm test || echo "No test script found — skipping"
+        run: npm test
 
       - name: Build the project
         run: npm run build
