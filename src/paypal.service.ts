@@ -13,24 +13,28 @@ this.client = new paypal.core.PayPalHttpClient(environment);
 console.log('PayPal Service Initialized. ID length:', clientId?.length, 'Secret length:', clientSecret?.length);
 }
 
-async createOrder(amount: string) {
-const req = new paypal.orders.OrdersCreateRequest();
-req.prefer('return=representation');
-req.requestBody({
-intent: 'CAPTURE',
-purchase_units: [{
-amount: {
-currency_code: 'GBP',
-value: amount
-}
-}],
-application_context: {
-return_url: 'http://localhost:3000/paypal/success',
-cancel_url: 'http://localhost:3000/paypal/cancel'
-}
-});
-const response = await this.client.execute(req);
-return response.result;
+async createOrder(amount: string): Promise<Record<string, unknown> | { error: string }> {
+  try {
+    const req = new paypal.orders.OrdersCreateRequest();
+    req.prefer('return-representation');
+    req.requestBody({
+      intent: 'CAPTURE',
+      purchase_units: [{
+        amount: {
+          currency_code: 'GBP',
+          value: amount
+        }
+      }],
+      application_context: {
+        return_url: 'https://my-first-api-801597296257.europe-west2.run.app/paypal/success',
+        cancel_url: 'https://my-first-api-801597296257.europe-west2.run.app/paypal/cancel'
+      }
+    });
+    const response = await this.client.execute(req);
+    return response.result;
+  } catch (err: unknown) {
+    return { error: String(err) };
+  }
 }
 
 async captureOrder(orderId: string) {
