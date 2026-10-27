@@ -8,7 +8,7 @@ private client: paypal.core.PayPalHttpClient;
 constructor() {
 const clientId = process.env.PAYPAL_CLIENT_ID!;
 const clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
-const environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
+const environment = new paypal.core.SandboxEnvironment(clientId!, clientSecret!);
 this.client = new paypal.core.PayPalHttpClient(environment);
 console.log('PayPal Service Initialized. ID length:', clientId?.length, 'Secret length:', clientSecret?.length);
 }
