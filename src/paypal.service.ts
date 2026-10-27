@@ -25,7 +25,7 @@ async createOrder(amount: string): Promise<Record<string, unknown> | { error: st
           value: amount
         }
       }],
-      application_context: {
+      application_context: {  
         return_url: 'https://my-first-api-801597296257.europe-west2.run.app/paypal/success',
         cancel_url: 'https://my-first-api-801597296257.europe-west2.run.app/paypal/cancel'
       }
@@ -36,11 +36,14 @@ async createOrder(amount: string): Promise<Record<string, unknown> | { error: st
     return { error: String(err) };
   }
 }
-
-async captureOrder(orderId: string) {
-const req = new paypal.orders.OrdersCaptureRequest(orderId);
-req.requestBody({});
-const response = await this.client.execute(req);
-return response.result;
+async captureOrder(orderId: string): Promise<Record<string, unknown> | { error: string }> {
+  try {
+    const req = new paypal.orders.OrdersCaptureRequest(orderId);
+    req.requestBody({});
+    const response = await this.client.execute(req);
+    return response.result;
+  } catch (err: unknown) {
+    return { error: String(err) };
+  }
 }
-}
+      
