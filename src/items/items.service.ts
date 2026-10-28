@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ItemsService {
-  create(/* createItemDto: CreateItemDto */) {
+  create() {
     return 'This action adds a new item';
   }
 
@@ -16,7 +16,7 @@ export class ItemsService {
     return `This action returns a #${id} item`;
   }
 
-  update(id: number, /* updateItemDto: UpdateItemDto */) {
+  update(id: number, ) {
     return `This action updates a #${id} item`;
   }
 
