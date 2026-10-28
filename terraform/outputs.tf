@@ -1,4 +1,4 @@
 output "cloud_run_url" {
   description = "URL of the deployed Cloud Run service"
-  value       = google_cloud_run_service.api.statuses[0].url
+  value       = google_cloud_run_service.api.status[0].url
 }
