@@ -31,4 +31,4 @@ async function bootstrap() {
 async function startServer() {
   await bootstrap();
 }
-startServer();
+startServer().catch(err => console.error('Server failed to start:', err));
