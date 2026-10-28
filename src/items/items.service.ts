@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 //import { CreateItemDto } from './dto/create-item.dto';
 //import { UpdateItemDto } from './dto/update-item.dto';
 
-@Injectable()
+/*@Injectable()
 export class ItemsService {
   create() {
     return 'This action adds a new item';
@@ -24,3 +24,4 @@ export class ItemsService {
     return `This action removes a #${id} item`;
   }
 }
+*/
