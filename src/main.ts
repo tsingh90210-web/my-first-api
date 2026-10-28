@@ -25,6 +25,10 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 3000);
   console.log('✅ Server running at: http://localhost:3000');
-  console.log('📖 API Docs at: http://localhost:3000/api-docs');
+  console.log('✅ API Docs at: http://localhost:3000/api-docs');
 }
-bootstrap();
+
+async function startServer() {
+  await bootstrap();
+}
+startServer();
